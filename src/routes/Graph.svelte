@@ -64,6 +64,8 @@
 
     $: xs = [...source_xs].map((v) => v / 100);
 
+    $: latest = xs[xs.length - 1];
+
     $: data = {
         labels: [...Array(xs.length)].map((x, i) => i),
         datasets: [
@@ -110,7 +112,24 @@
         LinearScale,
         PointElement,
         CategoryScale,
+        
     );
+
+    function addDatapoint() {
+        const last = source_xs[source_xs.length-1];
+        const next = last + (Math.random() - 0.5) * 4;
+
+        source_xs = [...source_xs, next];
+    }
+
+    let clear
+    $: {
+        clearInterval(clear)
+        clear = setInterval(addDatapoint, 1000)
+        // clear = setInterval(() => source_xs = [...source_xs, source_xs[source_xs.length-1] + Math.random() * 5], 1000)
+    }
 </script>
 
-<Line {data} options={{ responsive: true }} />
+<p>Your current temp is {latest}.</p>
+
+<Line {data} options={{ responsive: true, animation: {duration: 0} }} />
