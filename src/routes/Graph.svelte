@@ -128,6 +128,6 @@
     }
 </script>
 
-<p>Your current temp is {latest}.</p>
+<p>Your current temp is {Math.round(latest * 100)/100}.</p>
 
 <Line {data} options={{ responsive: true, animation: { duration: 0 } }} />
