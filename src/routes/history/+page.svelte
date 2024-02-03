@@ -4,7 +4,7 @@
 </svelte:head>
 
 <div class="text-column">
-	<h1>Hisotry</h1>
+	<h1>History</h1>
 
 	<p>Graph goes here</p>
 </div>
