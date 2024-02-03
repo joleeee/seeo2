@@ -1,7 +1,7 @@
 <script>
     import { Line } from "svelte-chartjs";
 
-    var xs = [
+    var source_xs = [
         2531, 2531, 2531, 2530, 2531, 2531, 2530, 2530, 2530, 2530, 2530, 2530,
         2530, 2529, 2529, 2529, 2529, 2529, 2529, 2528, 2528, 2528, 2528, 2528,
         2527, 2527, 2527, 2527, 2527, 2527, 2527, 2527, 2527, 2526, 2526, 2526,
@@ -62,11 +62,13 @@
         2495, 2495, 2495, 2495, 2495, 2495, 2495, 2494, 2495,
     ];
 
+    $: xs = [...source_xs].map((v) => v / 100);
+
     $: data = {
         labels: [...Array(xs.length)].map((x, i) => i),
         datasets: [
             {
-                label: "My First dataset",
+                label: "Temperature",
                 fill: true,
                 lineTension: 0.3,
                 backgroundColor: "rgba(225, 204,230, .3)",
