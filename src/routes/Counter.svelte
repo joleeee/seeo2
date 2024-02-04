@@ -11,6 +11,15 @@
 		// handle negative numbers
 		return ((n % m) + m) % m;
 	}
+
+	// let audio;
+
+	// function startTimer() {
+	// 	setTimeout(() => {
+	// 		console.log("PLAYING")
+	// 		audio.play()
+	// 	},200)	
+	// }
 </script>
 
 <div class="counter">
@@ -33,6 +42,7 @@
 		</svg>
 	</button>
 </div>
+
 
 <style>
 	.counter {

@@ -1,8 +1,30 @@
 <script>
 	import Graph from "./Graph.svelte";
 	import Counter from "./Counter.svelte";
+	import { temperature, pressure, time } from "./data.js";
+
+	temperature.subscribe((x) => (temp = x));
+	time.subscribe((x) => (horizontal = x));
+	pressure.subscribe((x) => (press = x));
 
 	var t = 27;
+
+	var temp = [];
+	var press = [];
+	var horizontal = [];
+
+	$: last_temperature = temp && temp[temp.length - 1];
+
+	$: {
+		if(last_temperature >= t) {
+			console.log("dead")
+			audio.play();
+
+			new Notification("Dårlig luftkvalitet, åpne et vindu!");
+		}
+	}
+
+	var audio;
 </script>
 
 <svelte:head>
@@ -12,12 +34,33 @@
 
 <section>
 	<h1>
-		<span class="welcome"> Status: You are alive! </span>
+		<span class="welcome">
+			Status: You are {last_temperature >= t ? "Dead" : "Alive"}!
+		</span>
 	</h1>
 
 	<Counter bind:count={t} />
-	<Graph bind:threshold={t} />
+
+	<h3>
+		Your temp is {last_temperature}
+	</h3>
+
+	<Graph
+		label={"Temperature"}
+		bind:threshold={t}
+		bind:yaxis={temp}
+		bind:xaxis={horizontal}
+	/>
+	<Graph
+		label={"Pressure"}
+		threshold={null}
+		bind:yaxis={press}
+		bind:xaxis={horizontal}
+	/>
 </section>
+
+<audio src="/notif.mp3" bind:this={audio}>
+</audio>
 
 <style>
 	section {
