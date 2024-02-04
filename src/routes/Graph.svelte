@@ -1,7 +1,9 @@
 <script>
     import { Line } from "svelte-chartjs";
 
-    var source_xs = [
+    export var threshold = 25;
+
+    var source_ys = [
         2531, 2531, 2531, 2530, 2531, 2531, 2530, 2530, 2530, 2530, 2530, 2530,
         2530, 2529, 2529, 2529, 2529, 2529, 2529, 2528, 2528, 2528, 2528, 2528,
         2527, 2527, 2527, 2527, 2527, 2527, 2527, 2527, 2527, 2526, 2526, 2526,
@@ -62,12 +64,16 @@
         2495, 2495, 2495, 2495, 2495, 2495, 2495, 2494, 2495,
     ];
 
-    $: xs = [...source_xs].map((v) => v / 100);
+    $: ys = [...source_ys].map((v) => v / 100);
+    //$: xs = [...Array(ys.length)].map((x, i) => i);
+    var xs;
 
-    $: latest = xs[xs.length - 1];
+    $: threshold_data = [...Array(ys.length)].map((x, i) => threshold);
+
+    $: latest = ys[ys.length - 1];
 
     $: data = {
-        labels: [...Array(xs.length)].map((x, i) => i),
+        labels: xs,
         datasets: [
             {
                 label: "Temperature",
@@ -88,7 +94,27 @@
                 pointHoverBorderWidth: 2,
                 pointRadius: 1,
                 pointHitRadius: 10,
-                data: xs,
+                data: ys,
+            },
+            {
+                label: "Threshold",
+                fill: true,
+                lineTension: 0.3,
+                backgroundColor: "rgba(225, 204,230, .3)",
+                borderColor: "rgb(255, 20, 0)",
+                borderCapStyle: "butt",
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: "miter",
+                pointBorderColor: "rgb(205, 130,1 58)",
+                pointBackgroundColor: "rgb(255, 255, 255)",
+                pointBorderWidth: 4,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgb(0, 0, 0)",
+                pointHoverBorderColor: "rgba(220, 220, 220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 0,
+                data: threshold_data,
             },
         ],
     };
@@ -115,19 +141,49 @@
     );
 
     function addDatapoint() {
-        const last = source_xs[source_xs.length - 1];
+        const last = source_ys[source_ys.length - 1];
         const next = last + (Math.random() - 0.5) * 4;
 
-        source_xs = [...source_xs, next];
+        source_ys = [...source_ys, next];
+    }
+
+    function nice(t) {
+        var date = new Date(t * 1000);
+
+        // Hours part from the timestamp
+        var hours = date.getHours();
+
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime =
+            hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+        return formattedTime;
+    }
+
+    function download() {
+        fetch("http://127.0.0.1:5000/get/temperature")
+            .then((resp) => resp.json())
+            // .then(j => console.log(j))
+            .then((j) => {
+                source_ys = j["temperature"];
+                xs = j["time"].map((x) => nice(x));
+            });
     }
 
     let clear;
     $: {
         clearInterval(clear);
-        clear = setInterval(addDatapoint, 1000);
+        clear = setInterval(download, 100);
+        // clear = setInterval(addDatapoint, 1000);
     }
 </script>
 
-<p>Your current temp is {Math.round(latest * 100)/100}.</p>
+<p>Your current temp is {Math.round(latest * 100) / 100}.</p>
 
 <Line {data} options={{ responsive: true, animation: { duration: 0 } }} />

@@ -1,5 +1,8 @@
 <script>
 	import Graph from "./Graph.svelte";
+	import Counter from "./Counter.svelte";
+
+	var t = 27;
 </script>
 
 <svelte:head>
@@ -12,7 +15,8 @@
 		<span class="welcome"> Status: You are alive! </span>
 	</h1>
 
-	<Graph />
+	<Counter bind:count={t} />
+	<Graph bind:threshold={t} />
 </section>
 
 <style>
