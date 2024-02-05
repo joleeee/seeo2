@@ -15,12 +15,19 @@
 
 	$: last_temperature = temp && temp[temp.length - 1];
 
+	$: dead = last_temperature >= t;
+
+	$: {
+		if(dead) {
+			console.log("NOTIF")
+			new Notification("Dårlig luftkvalitet, åpne et vindu!");
+		}
+	}
+
 	$: {
 		if(last_temperature >= t) {
 			console.log("dead")
 			audio.play();
-
-			new Notification("Dårlig luftkvalitet, åpne et vindu!");
 		}
 	}
 
@@ -35,7 +42,7 @@
 <section>
 	<h1>
 		<span class="welcome">
-			Status: You are {last_temperature >= t ? "Dead" : "Alive"}!
+			Status: You are {dead ? "Dead" : "Alive"}!
 		</span>
 	</h1>
 
